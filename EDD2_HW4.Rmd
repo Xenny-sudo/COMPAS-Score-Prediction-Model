@@ -1,0 +1,111 @@
+---
+title: "EDD2_HW4"
+author: "Benny"
+date: "2023-12-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#install.packages('caret')
+#install.packages('Metrics')
+suppressWarnings({library(e1071)})
+```
+
+
+# Risk of Failure to Appear
+```{r}
+cprfa <- read.csv('cprfa.csv')
+cpror <- read.csv('cpror.csv')
+cprov <- read.csv('cprov.csv')
+```
+
+```{r}
+cprfa
+cpror
+cprov
+```
+# Risk of Failure to Appear
+```{r}
+#Validation Set
+validationIDX <- sample(c(TRUE, FALSE), size = dim(cprfa)[1], replace = TRUE, prob = c(.7,.3))
+cprfa.validation <- cprfa[!validationIDX, ]
+cprfa.TrainTest <- cprfa[validationIDX, ]
+
+#Training/testing set
+trainIDX <- sample(c(TRUE, FALSE), size = dim(cprfa.TrainTest)[1], replace = TRUE, prob = c(.8,.2))
+cprfa.Train <- cprfa.TrainTest[trainIDX, ]
+cprfa.Test <- cprfa.TrainTest[!trainIDX, ]
+```
+
+```{r}
+cprfa_model <- naiveBayes(Score ~ age + MaritalStatus + Sex_Code_Text, data = cprfa.Train)
+cprfa_model.yPred <- predict(cprfa_model, newdata = cprfa.Test)
+
+cprfa_model.accuracy <- mean(cprfa_model.yPred == cprfa.Test$Score)
+cprfa_model.accuracy
+```
+# Risk of Recidivism
+```{r}
+#Validation Set
+validationIDX <- sample(c(TRUE, FALSE), size = dim(cpror)[1], replace = TRUE, prob = c(.7,.3))
+cpror.validation <- cpror[!validationIDX, ]
+cpror.TrainTest <- cpror[validationIDX, ]
+
+#Training/testing set
+trainIDX <- sample(c(TRUE, FALSE), size = dim(cpror.TrainTest)[1], replace = TRUE, prob = c(.8,.2))
+cpror.Train <- cpror.TrainTest[trainIDX, ]
+cpror.Test <- cpror.TrainTest[!trainIDX, ]
+```
+
+```{r}
+cpror_model <- naiveBayes(Score ~ age + MaritalStatus + Sex_Code_Text, data = cpror.Train)
+cpror_model.yPred <- predict(cpror_model, newdata = cpror.Test)
+
+cpror_model.accuracy <- mean(cpror_model.yPred == cpror.Test$Score)
+cpror_model.accuracy
+```
+# Risk of Violence
+```{r}
+#Validation Set
+validationIDX <- sample(c(TRUE, FALSE), size = dim(cprov)[1], replace = TRUE, prob = c(.7,.3))
+cprov.validation <- cprov[!validationIDX, ]
+cprov.TrainTest <- cprov[validationIDX, ]
+
+#Training/testing set
+trainIDX <- sample(c(TRUE, FALSE), size = dim(cprov.TrainTest)[1], replace = TRUE, prob = c(.8,.2))
+cprov.Train <- cprov.TrainTest[trainIDX, ]
+cprov.Test <- cprov.TrainTest[!trainIDX, ]
+```
+
+```{r}
+cprov_model <- naiveBayes(Score ~ age + MaritalStatus + Sex_Code_Text, data = cprov.Train)
+cprov_model.yPred <- predict(cprov_model, newdata = cprov.Test)
+
+cprov_model.accuracy <- mean(cprov_model.yPred == cprov.Test$Score)
+cprov_model.accuracy
+```
+```{r}
+cprfa_xtab <- table(cprfa_model.yPred, cprfa.Test$Score)
+cpror_xtab <- table(cpror_model.yPred, cpror.Test$Score)
+cprov_xtab <- table(cprov_model.yPred, cprov.Test$Score)
+```
+
+```{r}
+caret::confusionMatrix(cprfa_xtab)
+caret::confusionMatrix(cpror_xtab)
+caret::confusionMatrix(cprov_xtab)
+```
+
+
+```{r}
+Metrics::f1(cprfa_model.yPred,cprov.Test$Score)
+Metrics::f1(cpror_model.yPred,cprov.Test$Score)
+Metrics::f1(cprov_model.yPred,cprov.Test$Score)
+```
+
+
+
