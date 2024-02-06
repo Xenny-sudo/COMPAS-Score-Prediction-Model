@@ -1,2 +1,2 @@
 # COMPAS-Score-Prediction-Model
-Classwork where I had to see the relationship between Age, marital status, and COMPAS score. I then made a model in R to see if I could predict the results of the model. QA &amp; EDA was done using python.
+Constructed a predictive model aimed at assessing the potential predictability of recidivism risk among defendants based on factors such as age, marital status, and gender. Python was employed for Quality Assurance (QA) and Exploratory Data Analysis (EDA), while R was utilized for developing the predictive models. The implementation took place in Jupyter for Python and RStudio for R, showcasing a comprehensive approach using both languages.
